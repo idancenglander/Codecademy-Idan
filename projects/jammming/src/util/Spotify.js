@@ -1,6 +1,6 @@
 const clientId = 'db70e7c71c69484e8772c09addc1fe7d';
 const secret = '99c9fe5bf094407a9d5bea06b11218c8';
-const redirectURI = 'http://localhost:3000/';
+const redirectURI = 'jammmidan.surge.sh';
 let accessToken;
 
 const Spotify = {
@@ -52,22 +52,48 @@ const Spotify = {
     let userID;
     let playlistID;
 
-    fetch('https://api.spotify.com/v1/me', {headers: headers}).then(response => {
-      if (response.ok){return response.json();}
-    }).then(jsonResponse => {userID = jsonResponse.id;
-        fetch(`https://api.spotify.com/v1/users/&{userID}/playlists`,{
-          headers: headers,
-          method: 'POST',
-          body: JSON.stringify({name: playlistName})}).then(response => {
+    fetch(
+      'https://api.spotify.com/v1/me',
+      {headers: headers}
+    ).then(
+      response => {
+        if (response.ok){return response.json();}
+      }
+    ).then(
+      jsonResponse => {
+        userID = jsonResponse.id;
+        fetch(
+          `https://api.spotify.com/v1/users/${userID}/playlists`,
+          {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify({name: playlistName})
+          }
+        ).then(
+          response => {
             if(response.ok){return response.json();}
-          }).then(jsonResponse => {playlistID = jsonResponse.id;
-              fetch(`https://api.spotify.com//v1/users/&{userID}/playlists/&{playlistID}/tracks`,{
+          }
+        ).then(
+          jsonResponse => {
+            playlistID = jsonResponse.id;
+            fetch(
+              `https://api.spotify.com/v1/users/${userID}/playlists/${playlistID}/tracks`,
+              {
                 headers: headers,
-                metthod: 'POST',
-                body: JSON.stringify({uri: trackURIs})}).then(response => {
-                  if(response.ok){return response.json();}
-                }).then(jsonResponse => {playlistID = jsonResponse.id;})
-            })})
+                method: 'POST',
+                body: JSON.stringify({uris: trackURIs})
+              }
+            ).then(
+              response => {
+                if(response.ok){return response.json();}
+              }
+            ).then(
+              jsonResponse => {playlistID = jsonResponse.id;}
+            )
+          }
+        )
+      }
+    )
   }
 }
 
